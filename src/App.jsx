@@ -1,8 +1,12 @@
-import 'dotenv/config'
-console.log(process.env)
 import { useState } from 'react'
 import './App.css'
 import axios from 'axios'
+
+const clientId = import.meta.env.VITE_REACT_APP_CLIENT_ID;
+console.log(clientId)
+const clientSecret = import.meta.env.VITE_REACT_APP_CLIENT_SECRET;
+console.log(clientSecret)
+
 
 function App() {
   const [search, setSearch] = useState('')
@@ -12,15 +16,20 @@ function App() {
     e.preventDefault();
   }
 
-  async function getArtist() {
-    try {
-      const apiKey = process.env.REACT_APP_CLIENT_ID;
-      const response = await axios.get()
-      console.log(response)
-    } catch (error) {
-      console.log(error)
-    }
+  const getToken = async () => {
+    const token = await axios
+      .get(url,
+        {
+
+        headers: {
+        
+      }}).catch(error => console.log('Error getting token:', error))
+  
   }
+
+
+  getToken()
+
 
   return (
     <>
@@ -30,7 +39,14 @@ function App() {
       <div>
         <form>
           <label htmlFor="search">Search</label><br />
-          <input type="text" name="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search" /><br />
+          <input
+            type="text"
+            name="search"
+            id="search"
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)}
+            placeholder="Search" /><br />
           <button type="submit" onClick={handleSubmit}>Search</button>
         </form>
       </div>
@@ -41,5 +57,6 @@ function App() {
     </>
   )
 }
+
 
 export default App
