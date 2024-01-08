@@ -3,33 +3,47 @@ import './App.css'
 import axios from 'axios'
 
 const clientId = import.meta.env.VITE_REACT_APP_CLIENT_ID;
-console.log(clientId)
 const clientSecret = import.meta.env.VITE_REACT_APP_CLIENT_SECRET;
-console.log(clientSecret)
+
+
+const getToken = async () => {
+  const result = await axios.post('https://accounts.spotify.com/api/token', `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
+    {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+  console.log(result)
+  const data = await result.data;
+  return data.access_token
+}
+
+const token = await getToken();
 
 
 function App() {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState('');
+  const [searchResult, setSearchResult] = useState(null);
+  const [token, setToken] = useState('')
 
-
-  function handleSubmit(e) {
-    e.preventDefault();
-  }
-
-  const getToken = async () => {
-    const token = await axios
-      .get(url,
+  const getResult = async () => {
+    try {
+      const response = await axios.get(`https://api.spotify.com/v1/search?q=${search}%2520track%3ADoxy%2520artist%3AMiles%2520Davis&type=album%2Cplaylist%2Cartist%2Ctrack%2Cshow%2Cepisode%2Caudiobook`,
         {
-
-        headers: {
-        
-      }}).catch(error => console.log('Error getting token:', error))
-  
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      if (response.data) {
+        const tracks = response.data.tracks.items;
+        console.log(tracks);
+        const artists = response.data.artists.items;
+        console.log(artists);
+      }
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
   }
-
-
-  getToken()
-
 
   return (
     <>
@@ -45,14 +59,14 @@ function App() {
             id="search"
             value={search}
             onChange={(e) =>
-              setSearch(e.target.value)}
+            setSearch(e.target.value)}
             placeholder="Search" /><br />
-          <button type="submit" onClick={handleSubmit}>Search</button>
         </form>
       </div>
       <div>
         <p>{search}</p>
-        <p>Search object goes here</p>
+        <p></p>
+        <p></p>
       </div>
     </>
   )
