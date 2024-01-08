@@ -14,7 +14,6 @@ const getToken = async () => {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   });
-  console.log(result)
   const data = await result.data;
   return data.access_token
 }
@@ -51,7 +50,7 @@ function App() {
       console.error('Error fetching search results:', error);
     }
   }
-
+console.log(searchResult)
   const debouncedGetResult = debounce(getResult, 300);
 
   const handleSearchChange = (e) => {
@@ -84,8 +83,9 @@ function App() {
       <div>
         {searchResult && searchResult.map((artist, index) => (
           <div key={index}>
-        <p>{artist.name}</p>
-        </div>
+            <p>{artist.name}</p>
+            <img src={artist.images[0].url}></img>
+          </div>
         ))}
       </div>
     </>
