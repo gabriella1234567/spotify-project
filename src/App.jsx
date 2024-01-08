@@ -84,8 +84,8 @@ function App() {
       <div>
         {searchResult && searchResult.map((artist, index) => (
           <div key={index}>
-            <p>{artist.name}</p>
-          </div>
+        <p>{artist.name}</p>
+        </div>
         ))}
       </div>
     </>
