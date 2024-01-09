@@ -21,7 +21,7 @@ const getToken = async () => {
 
 function App() {
   const [search, setSearch] = useState('');
-  const [searchResult, setSearchResult] = useState(null);
+  const [searchResult, setSearchResult] = useState([]);
   const [token, setToken] = useState('')
 
   useEffect(() => {
@@ -45,15 +45,18 @@ function App() {
             'Authorization': `Bearer ${token}`
           }
       });
-      setSearchResult(response.data.artists.items)
+      if (response.data.artists.items) {
+        setSearchResult(response.data.artists.items)
+      }
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
   }
-console.log(searchResult)
+  console.log(searchResult)
   const debouncedGetResult = debounce(getResult, 300);
 
   const handleSearchChange = (e) => {
+    e.preventDefault();
     const value = e.target.value;
     setSearch(value);
     if (value) {
@@ -69,7 +72,6 @@ console.log(searchResult)
         Spotify Project
       </h1>
       <div>
-        <form>
           <label htmlFor="search">Search</label><br />
           <input
             type="text"
@@ -78,15 +80,14 @@ console.log(searchResult)
             value={search}
             onChange={handleSearchChange}
             placeholder="Search" /><br />
-        </form>
       </div>
       <div>
-        {searchResult && searchResult.map((artist, index) => (
+        {searchResult ? searchResult.map((artist, index) => (
           <div key={index}>
             <p>{artist.name}</p>
-            <img src={artist.images[0].url}></img>
+            {artist.images.length > 0 && <img src={artist.images[0].url} alt={artist.name} />}
           </div>
-        ))}
+        )) : null}
       </div>
     </>
   )
